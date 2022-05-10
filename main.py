@@ -2,10 +2,7 @@ class wordleSolver:
     def __init__(self):
         self.wordList = self.generate_wordlist()
 
-    def generate_wordlist(self,
-                          green_letters={},
-                          yellow_letters={},
-                          grey_letters=[]):
+    def generate_wordlist(self, green_letters={}, yellow_letters={}, grey_letters=[]):
         # creates variable wordList with contents [word1, word2, word3, ...]
         with open('words', 'r') as wordList_file:
             wordList = []
@@ -25,33 +22,22 @@ class wordleSolver:
                     if word[pos] == green_letters[pos]:
                         tempWordList.append(word)
                 wordList = tempWordList
-            # at this point, wordList = all words with green letters in correct spots
-                
-            # yellow_keys = list(yellow_letters.keys())
-            # for pos in yellow_keys:
-            #     tempWordList = []
-            #     for word in wordList:
-            #         if yellow_letters[
-            #                 pos] in word and yellow_letters[pos] != word[pos]:
-            #             tempWordList.append(word)
-            #     wordList = tempWordList
-            # yellow_values = set(yellow_letters.values())
-            # print(yellow_values)
-            # for i in yellow_values:
-            #     tempWordList = []
-            #     for word in wordList:
-            #         if i in word:
-            #             tempWordList.append(word)
-            #     wordList = tempWordList
-
-                
-            print(wordList)
+            # at this point, wordList = all words with green letters in correct spots and without grey letters
+            yellow_keys = list(yellow_letters.keys())
+            for pos in yellow_keys:
+                for list_pos, letter in enumerate(yellow_letters[pos]):
+                    tempWordList = []
+                    for word in wordList:
+                        if letter in word and pos != word.index(letter):
+                            tempWordList.append(word)
+                    wordList = tempWordList
+            return wordList
         else:
             return wordList
 
     def get_green_letters(self):
         print("Enter green letters:\n")
-        if input('Are there any green letters?(YES/NO): ').upper() == 'NO':
+        if input('Are there any green letters?(Y/n): ').upper() == 'N':
             x = False
         else:
             x = True
@@ -60,21 +46,33 @@ class wordleSolver:
             let = input("Enter a Letter: ").lower()
             pos = int(input("Enter the letter's position(0-4): "))
             letters[pos] = let
-            if input("Add another letter?(YES/NO): ").upper() == 'NO':
+            if input("Add another letter?(Y/n): ").upper() == 'N':
                 x = False
         return letters
 
     def get_yellow_letters(self):
-        pass
+        print("Enter yellow letters:\n")
+        if input('Are there any yellow letters?(Y/n): ').upper() == 'N':
+            x = False
+        else:
+            x = True
+        letters = {0: [], 1: [], 2: [], 3: [], 4: []}
+        while x == True:
+            let = input("Enter a Letter: ").lower()
+            pos = int(input("Enter the letter's position(0-4): "))
+            letters[pos].append(let)
+            if input("Add another letter?(Y/n): ").upper() == 'N':
+                x = False
+        return letters
 
     def main(self):
         green_letters = self.get_green_letters()
         yellow_letters = self.get_yellow_letters()
-        grey_letters = input(
-            "Enter all grey letters(x,y,z...): ").lower().split(',')
-        self.generate_wordlist(green_letters, yellow_letters, grey_letters)
+        grey_letters = input("Enter all grey letters(x,y,z...): ").lower().split(',')
+        solved_wordList = self.generate_wordlist(green_letters, yellow_letters, grey_letters)
+        # ', '.join(solved_wordList)
+        print(solved_wordList)
 
 
 w = wordleSolver()
-# print(w.wordList)
 w.main()
